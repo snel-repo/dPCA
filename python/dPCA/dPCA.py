@@ -536,9 +536,11 @@ class dPCA(BaseEstimator):
 
         n_features = X.shape[0]
 
+        self.train_data_mean = np.mean(flat2d(X),1).reshape((n_features,) + len(self.labels)*(1,))
+
         # center data
         if center:
-            X = X - np.mean(flat2d(X),1).reshape((n_features,) + len(self.labels)*(1,))
+            X = X - self.train_data_mean
 
         # marginalize data
         if mXs is None:
@@ -923,7 +925,7 @@ class dPCA(BaseEstimator):
             latent component. If specific marginalization is given, returns only array
 
         """
-        X = self._zero_mean(X)
+        X = X - self.train_data_mean
         total_variance = np.sum((X - np.mean(X))**2)
 
         def marginal_variances(marginal):
